@@ -13,10 +13,12 @@ from moveit_configs_utils import MoveItConfigsBuilder
 def generate_launch_description():
     moveit_config = (
         MoveItConfigsBuilder(
-            robot_name="panda", package_name="moveit_resources_panda_moveit_config"
+            robot_name="turtlebot3_manipulation", package_name="motion_planning_python_api_tutorial"
         )
-        .robot_description(file_path="config/panda.urdf.xacro")
-        .trajectory_execution(file_path="config/gripper_moveit_controllers.yaml")
+        .robot_description(
+        file_path=get_package_share_directory("turtlebot3_manipulation_description")
+            + "urdf/turtlebot3_manipulation_robot.urdf.xacro")
+        .trajectory_execution(file_path="config/controllers.yaml")
         .moveit_cpp(
             file_path=get_package_share_directory("moveit2_tutorials")
             + "/config/motion_planning_python_api_tutorial.yaml"
@@ -61,7 +63,7 @@ def generate_launch_description():
         executable="static_transform_publisher",
         name="static_transform_publisher",
         output="log",
-        arguments=["--frame-id", "world", "--child-frame-id", "panda_link0"],
+        arguments=["--frame-id", "world", "--child-frame-id", "base_link"],
     )
 
     robot_state_publisher = Node(
@@ -73,7 +75,7 @@ def generate_launch_description():
     )
 
     ros2_controllers_path = os.path.join(
-        get_package_share_directory("moveit_resources_panda_moveit_config"),
+        get_package_share_directory("motion_planning_python_api_tutorial"),
         "config",
         "ros2_controllers.yaml",
     )
@@ -89,8 +91,8 @@ def generate_launch_description():
 
     load_controllers = []
     for controller in [
-        "panda_arm_controller",
-        "panda_hand_controller",
+        "turtlebot_arm_controller",
+        "turtlebot_hand_controller",
         "joint_state_broadcaster",
     ]:
         load_controllers += [
